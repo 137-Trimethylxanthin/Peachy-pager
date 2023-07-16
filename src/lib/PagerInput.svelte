@@ -4,8 +4,18 @@
   let pageNum = ''
   let pageResponse = ''
 
-  async function greet() {
-    pageResponse = await invoke('sendNewPage', { pageNum })
+  async function send() {
+    if (pageNum === '') {
+      pageResponse = 'Keine Nummer -_-'
+      return
+      
+    } else if (pageNum.length !== 3) {
+      pageResponse = 'Bitte eine 3 stellige number'
+      return
+
+    } else{
+      pageResponse = await invoke('sendNewPage', { pageNum })
+    }
   }
 
   function validateInput() {
@@ -15,7 +25,7 @@
 
 <div>
   <input type="text" id="greet-input" placeholder="123" maxlength="3" pattern="[0-9]*" bind:value="{pageNum}" on:input={validateInput}  />
-  <button on:click="{greet}">Greet</button>
+  <button on:click="{send}">connect</button>
   <p>{pageResponse}</p>
 </div>
 
