@@ -4,7 +4,6 @@
     import Modal from '../lib/Modal.svelte';
     import Options from '../lib/Options.svelte';
 
-
     let icon = ""
     let theme = ""
     // @ts-ignore
