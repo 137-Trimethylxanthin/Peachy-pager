@@ -6,6 +6,10 @@
 
     let icon = ""
     let theme = ""
+    if (document.cookie.length == 0){
+        document.cookie = "setTheme=light;max-age=31536000;path=/"
+        document.cookie = "cMode=Easy;max-age=31536000;path=/"
+    }
     // @ts-ignore
     let cMode = document.cookie.split(";").find((c) => c.trim().startsWith("cMode=")).split("=")[1]
 
