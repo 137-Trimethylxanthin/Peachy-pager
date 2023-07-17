@@ -8,7 +8,7 @@
     appConfigDir()
     .then(appConfigDirPath => {
         realConfDir = appConfigDirPath+"peachy-pager/config.json";
-        realConfDir = realConfDir.replace("com.tauri.dev/", "");
+        realConfDir = realConfDir.replace("com.maxi.peachypager/", "");
         console.log("Directory path:", realConfDir);
     })
     .catch(error => {
