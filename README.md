@@ -25,6 +25,10 @@ danach 3 stellige zahl eingeben und auf connect klicken
 
 auf windows wird es keine rückmeldung mehr geben einfach warten
 
+falls nach den warten ein fahler darunter steht ich glaube: nach x versuchen fehlgeschalgen hat es nicht geklapp
+
+aber wenn nichts oder etwas anderes (eventuell positives) da steht dann hast es geklapp.
+
 dark und light mode switch via ☀️ und 🌙
 
 # HAVE FUN :) 
