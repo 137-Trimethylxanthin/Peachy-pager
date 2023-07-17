@@ -14,7 +14,28 @@
       return
 
     } else{
-      pageResponse = await invoke('sendNewPage', { pageNum })
+      pageResponse = 'Connecting... (kann bis zu 10 sekunden dauern pro versuch haben 3 versuche)'
+      //sleep for like 01 secs
+      await new Promise(r => setTimeout(r, 500));
+    try {
+      pageResponse = await invoke('connect', { pageNum });
+      // Handle the successful response
+      console.log(pageResponse);
+    } catch (error) {
+      if (error === 'Failed to connect after 3 retries') {
+        console.log('error');
+        const maxRetries = 3;
+        const errorMessage = `Failed to connect after ${maxRetries} retries`;
+        pageResponse = errorMessage;
+        // Handle the error message
+    } else {
+      // Handle other errors
+      pageResponse = error +" -_- didnt work idk why";
+
+  }
+}
+
+
     }
   }
 
@@ -25,7 +46,7 @@
 
 <div>
   <input type="text" id="greet-input" placeholder="123" maxlength="3" pattern="[0-9]*" bind:value="{pageNum}" on:input={validateInput}  />
-  <button on:click="{send}">connect</button>
+  <button class="main-buttons" on:click="{send}">connect</button>
   <p>{pageResponse}</p>
 </div>
 

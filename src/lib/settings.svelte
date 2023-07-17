@@ -5,11 +5,12 @@ let path = ""
 
   async function first_time_file(){
     path = await invoke('first_time_file')
+    path = path+"/peachy-pager/config.json"
   }
 </script>
 
 <div>
-    <button on:click="{first_time_file}">test config file</button>
+    <button class="main-buttons" on:click="{first_time_file}">test config file</button>
     <p>{path}</p>
 </div>
 

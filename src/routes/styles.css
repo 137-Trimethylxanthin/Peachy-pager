@@ -177,7 +177,7 @@ header ul li h3:active{
   input:hover{
     box-shadow: 0 0 10px var(--surface2);
   }
-  button{
+  .main-buttons{
     width: 60%;
     height: 100%;
     font-size: 2rem;
@@ -189,7 +189,7 @@ header ul li h3:active{
     box-shadow: 0 0 0 0.1em var(--surface1) inset;
 
   }
-  button:hover{
+  .main-buttons:hover{
     background-color: var(--green);
     color: var(--surface0);
   }

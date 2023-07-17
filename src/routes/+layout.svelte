@@ -1,6 +1,9 @@
 <script>
 	import { _toggleDarkMode} from "./+layout";
     import "./styles.css"
+    import Modal from '../lib/Modal.svelte';
+    import Options from '../lib/Options.svelte';
+
 
     let icon = ""
     let theme = ""
@@ -31,7 +34,7 @@
     }
 
     function settingsPopup(){
-        console.log("settings")
+        showModal = true;
     }
 
     function changeMode(){
@@ -39,6 +42,12 @@
         document.cookie = `cMode=${cMode};max-age=31536000;path=/`
     }
 
+
+  let showModal = false;
+
+  function openModal() {
+    showModal = true;
+  }
     
 </script>
 
@@ -57,6 +66,9 @@
         <li><img class="icons" src="./media/option-{theme}.png" alt="" on:click={settingsPopup}></li>
     </ul>
 </header>
+<Modal bind:is_open={showModal}>
+    <Options />
+</Modal>
 
 <main>
     <slot></slot>
