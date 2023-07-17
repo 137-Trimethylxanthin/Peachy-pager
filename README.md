@@ -17,6 +17,8 @@ unter den settings bitte ip und port setzten
 
 danach 3 stellige zahl eingeben und auf connect klicken
 
+auf windows wird es keine rückmeldung mehr geben einfach warten
+
 # HAVE FUN :) 
 
 <3 - Methyltheobromin (aka maxi) - <3
