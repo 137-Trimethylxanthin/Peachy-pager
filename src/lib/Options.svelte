@@ -9,37 +9,39 @@
         is_open.set(false);
     }
 
-    let realConfDir = '';
-    appConfigDir()
-    .then(appConfigDirPath => {
-        realConfDir = appConfigDirPath+"peachy-pager/config.json";
-        realConfDir = realConfDir.replace("com.maxi.peachypager/", "");
-        console.log("Directory path:", realConfDir);
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
-
     let ip:string[] = ['', '', '', ''];
     let port:string = '';
     let resp:string = '';
 
-    fetch(realConfDir)
-    .then(response => response.json())
-    .then(data => {
-      // Assuming the JSON structure is an array with two objects
-        if (Array.isArray(data) && data.length === 2) {
-            // Extract the values and assign them to variables
-            ip = data[0].ip || ip;
-            port = data[1].port || port;
-        }
-    })
-    .catch(error => {
-        console.error('Error loading JSON:', error);
-    });
+
+
+    async function setSettings() {
+        let jsonString:string = await invoke('get_json_data');
+        console.log(jsonString);
+        let jsonData = JSON.parse(jsonString);
+        console.log(jsonData);
+        ip = jsonData.ip4.split('.');
+        port = jsonData.port;
+    }
+
+    setSettings();
 
     async function save() {
+        resp = '';
         console.log(ip, port);
+        if (ip.some((segment) => segment === '')) {
+          resp = 'Bitte eine IP angeben ';
+        }
+        if (port === '') {
+          if (resp !== '') {
+            resp += 'und ';
+          }
+          resp += 'Bitte einen Port angeben ';
+        }
+        if (resp !== '') {
+          return;
+        }
+
         const ipString = ip.join('.');
         const jsonData = { ip4: ipString, port }; // Updated: Changed 'ip' to 'ip4'
         const jsonString = JSON.stringify(jsonData);
@@ -61,42 +63,75 @@
             if (inputValue.length > 3) {
                 inputElement.value = inputValue.slice(0, 3);
             }
-
             ip[index] = inputElement.value;
-          if (index < inputElements.length - 1 && inputValue.length === 3) {
-              const nextInputElement = inputElements[index + 1] as HTMLInputElement;
-              nextInputElement.focus();
-          }
-        });
+
+            if (index < inputElements.length - 1 && inputValue.length === 3) {
+                const nextInputElement = inputElements[index + 1] as HTMLInputElement;
+                nextInputElement.focus();
+                nextInputElement.select();
+            }
+
+            if (index > 0 && inputValue.length === 0) {
+                const previousInputElement = inputElements[index - 1] as HTMLInputElement;
+                previousInputElement.focus();
+            }
+          });
         });
     });
 
-    let cMode: string;
-    const cookie = document.cookie;
-    if (cookie) {
-      const cookieValue = cookie.split(";").find((c) => c.trim().startsWith("cMode="))?.split("=")[1];
-      cMode = cookieValue === "Easy" ? "Dev" : "Easy";
-    }
+  let cMode: string = localStorage.getItem('cMode') || "Easy";
 
-    function changeMode(){
-        cMode = cMode === "Easy" ? "Dev" : "Easy"
-        document.cookie = `cMode=${cMode};max-age=31536000;path=/`
+  function changeMode(){
+      cMode = cMode === "Easy" ? "Dev" : "Easy"
+      localStorage.setItem('cMode', cMode);
+  }
+
+  function selectInput(event: any) {
+    event.target.select();
+  }
+
+function handleKeyPress(event: any) {
+    const inputElement = event.target as HTMLInputElement;
+    const inputValue = inputElement.value;
+    const key = event.key;
+    console.log(key);
+    if ((key < '0' || key > '9') && key !== ' ' && key !== 'Enter' && key !== 'Backspace') {
+        event.preventDefault();
+    } else if ((key === ' ' || key === 'Enter') && key !== 'Backspace') {
+        event.preventDefault();
+        const inputElements = document.querySelectorAll('.ip-input');
+        const index = Array.from(inputElements).indexOf(inputElement);
+        if (index < inputElements.length - 1) {
+            const nextInputElement = inputElements[index + 1] as HTMLInputElement;
+            nextInputElement.focus();
+            nextInputElement.select();
+        }
+    } else if (key === 'Backspace') {
+        const inputElements = document.querySelectorAll('.ip-input');
+        const index = Array.from(inputElements).indexOf(inputElement);
+        if (index > 0 && inputValue.length === 0) {
+            const previousInputElement = inputElements[index - 1] as HTMLInputElement;
+            previousInputElement.focus();
+        }
     }
+}
 </script>
 <div>
   <h1>Options</h1>
-  <li><h3 on:click={changeMode}>Mode: {cMode}</h3></li>
+  <h3 class="mode" on:click={changeMode}>Mode: {cMode}</h3>
   <h2 class="discription">IP-Adresse</h2>
   <div class="ip-row">
     {#each ip as segment, index}
-      <input class="ip-input" type="text" bind:value={segment} maxlength="3" />
+      <input class="ip-input" type="text" bind:value={segment} maxlength="3" on:click={selectInput} on:keydown={handleKeyPress}/>
       {#if index < 3}
         <span class="separator">.</span>
       {/if}
     {/each}
   </div>
   <h2 class="discription">Port</h2>
-  <input type="text" bind:value={port} />
+  <input type="text" class="port" bind:value={port} on:click={selectInput} on:keypress={handleKeyPress}/>
+
+  <p class="resp">{resp}</p>
 
   <button on:click={close} class="modal-buttons modal-buttons-cancel">Cancel</button>
   <button on:click={save} class="modal-buttons modal-buttons-save">Save</button>
@@ -109,6 +144,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .port{
+    width: 5em;
+    height: 100%;
+    font-size: 2rem;
+    text-align: center;
+    background-color: var(--surface0);
+    border: 1px solid var(--surface1);
+    border-radius: 0.5em;
+    box-shadow: 0 0 0 0.1em var(--surface1) inset;
   }
 
   .separator {
@@ -132,25 +178,7 @@
     border-radius: 0.5em;
     box-shadow: 0 0 0 0.1em var(--surface1) inset;
   }
-  .temp-save{
-    width: 60%;
-    height: 100%;
-    font-size: 2rem;
-    text-align: center;
-    margin-top: 0.5em;
-    background-color: var(--surface0);
-    border: 1px solid var(--surface1);
-    border-radius: 0.5em;
-    box-shadow: 0 0 0 0.1em var(--surface1) inset;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-  }
-  .temp-save:hover{
-    box-shadow: 0 0 10px var(--surface2);
-  }
-  .temp-save:active {
-      background-color: var(--surface1);
-  }
+
   .separator {
     margin: 0 5px;
     font-size: 2rem;
@@ -158,6 +186,7 @@
   .discription{
     font-size: 2rem;
     margin-top: 0.5em;
+    font-weight: 500;
   }
 
      .modal-buttons {
@@ -180,4 +209,37 @@
         background-color: var(--red);
         color: var(--crust);
     }
+    h3{
+      background-color: var(--surface1);
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 500;
+      padding: 0.5em 1em;
+      border-radius: 0.5em;
+      box-shadow: 0 0 0 0.1em var(--surface2) inset;
+      cursor: pointer;    
+      transition: all 0.1s ease-in-out;
+
+    }
+    h3:hover{
+        background-color: var(--green);
+        color: var(--surface0);
+        scale : 1.1;
+    }
+    h3:active{
+        background-color: var(--teal);
+        scale : 1;
+    }
+    h1{
+      font-size: 3rem;
+      margin-bottom: 0.5em;
+      font-weight: 900;
+    }
+    .resp{
+      font-size: 1.5rem;
+      margin-top: 1em;
+      font-weight: 500;
+      margin: 1em 0 0 0;
+    }
+
 </style>

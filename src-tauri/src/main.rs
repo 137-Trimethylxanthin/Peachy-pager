@@ -62,7 +62,7 @@ fn main() {
         }
 
     tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![first_time_file, connect, change_config])
+    .invoke_handler(tauri::generate_handler![first_time_file, connect, change_config, get_json_data])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
@@ -139,7 +139,7 @@ fn lrsn_listener(sock: &mut TcpStream) -> Result<String, CustomError>  {
 
 
 #[tauri::command]
-fn connect(page_num: &str) -> Result<String, CustomError> {
+async fn connect(page_num: &str) -> Result<String, CustomError> {
     let config_path = tauri::api::path::config_dir().unwrap().join(CONFIG_DIR).join("config.json");
     let config_file = fs::read_to_string(config_path).expect("Failed to read file");
     let config: Config = serde_json::from_str(&config_file).expect("Failed to deserialize JSON");
@@ -229,7 +229,7 @@ fn connect(page_num: &str) -> Result<String, CustomError> {
 
 #[tauri::command]
 fn change_config(config_as_json_string: &str)-> String{
-    let config_path = tauri::api::path::config_dir().unwrap().join(r"peachy-pager\config.json");
+    let config_path = tauri::api::path::config_dir().unwrap().join(CONFIG_DIR).join("config.json");
     eprintln!("Result: {:?}", config_as_json_string);
     let result: Result<Config, serde_json::Error> = serde_json::from_str(config_as_json_string);
     eprintln!("Result: {:?}", result.as_ref());
@@ -250,5 +250,13 @@ fn change_config(config_as_json_string: &str)-> String{
             return format!("Error: {:?}", err)
         }
     }        
+}
 
+#[tauri::command]
+fn get_json_data()->String{
+    let config_path = tauri::api::path::config_dir().unwrap().join(CONFIG_DIR).join("config.json");
+    let config_file = fs::read_to_string(config_path).expect("Failed to read file");
+    let config: Config = serde_json::from_str(&config_file).expect("Failed to deserialize JSON");
+    let serialized_data = serde_json::to_string_pretty(&config).expect("Failed to serialize data");
+    return serialized_data
 }

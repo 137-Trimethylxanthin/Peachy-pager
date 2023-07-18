@@ -5,28 +5,27 @@
     import Options from '../lib/Options.svelte';
     import {is_open} from "../lib/store"
 
-    let icon = ""
-    let theme = ""
-    if (document.cookie.length == 0){
-        document.cookie = "setTheme=light;max-age=31536000;path=/"
-        document.cookie = "cMode=Easy;max-age=31536000;path=/"
+    let icon = "";
+    let theme = "";
+    if (!localStorage.getItem('setTheme')){
+        localStorage.setItem('setTheme', 'light');
+        localStorage.setItem('cMode', 'Easy');
     }
 
-
-    console.log(document.documentElement.dataset.theme)
+    console.log(document.documentElement.dataset.theme);
     if (document.documentElement.dataset.theme === "dark"){
-        icon = "sun"
-        theme = "dark"
+        icon = "sun";
+        theme = "dark";
     } else {
-        icon = "moon"
-        theme = "light"
+        icon = "moon";
+        theme = "light";
     }
 
     let state = "no-smol"
 
     function click(){
         document.documentElement.dataset.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-        document.cookie = `setTheme=${document.documentElement.dataset.theme};max-age=31536000;path=/`;
+        localStorage.setItem('setTheme', document.documentElement.dataset.theme);
         if (document.documentElement.dataset.theme === "dark"){
             icon = "sun"
             theme = "dark"

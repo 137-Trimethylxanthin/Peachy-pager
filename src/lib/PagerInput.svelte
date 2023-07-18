@@ -97,6 +97,7 @@
     width: 80%;
     height: 100%;
     font-size: 5rem;
+    padding-bottom: 0.1em;
   }
   #page-num{
     border-bottom-left-radius: 0;
