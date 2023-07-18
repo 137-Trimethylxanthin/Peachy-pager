@@ -5,7 +5,6 @@ let path = ""
 
   async function first_time_file(){
     path = await invoke('first_time_file')
-    path = path+"/peachy-pager/config.json"
   }
 </script>
 
