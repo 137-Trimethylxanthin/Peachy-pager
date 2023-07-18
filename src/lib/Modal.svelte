@@ -1,9 +1,10 @@
-<script>
-    export let is_open = false;
+<script lang="ts">
+    let is_open = false;
     import { fade } from 'svelte/transition';
-
+    import { is_open as isOpen} from './store';
+    $: is_open = $isOpen;
     function close() {
-        is_open = false;
+        console.log("modal",is_open)
     }
 </script>
 
@@ -11,8 +12,7 @@
     <div class="modal" transition:fade>
         <div class="modal-content">
             <slot></slot>
-            <button on:click={close} class="modal-buttons modal-buttons-cancel">Cancel</button>
-            <button on:click={close} class="modal-buttons modal-buttons-save">Save</button>
+            <button on:click={close}></button>
         </div>
     </div>
 {/if}

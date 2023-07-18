@@ -2,7 +2,12 @@
     import { onMount } from 'svelte';
     import { invoke } from '@tauri-apps/api/tauri';
     import { appConfigDir } from '@tauri-apps/api/path';
-    
+    import { is_open } from './store';
+
+
+    function close() {
+        is_open.set(false);
+    }
 
     let realConfDir = '';
     appConfigDir()
@@ -15,9 +20,9 @@
         console.error("Error:", error);
     });
 
-    let ip = ['', '', '', ''];
-    let port = '';
-    let resp = '';
+    let ip:string[] = ['', '', '', ''];
+    let port:string = '';
+    let resp:string = '';
 
     fetch(realConfDir)
     .then(response => response.json())
@@ -33,7 +38,7 @@
         console.error('Error loading JSON:', error);
     });
 
-    async function first_time_file() {
+    async function save() {
         console.log(ip, port);
         const ipString = ip.join('.');
         const jsonData = { ip4: ipString, port }; // Updated: Changed 'ip' to 'ip4'
@@ -41,6 +46,7 @@
         console.log(jsonString);
         
         resp = await invoke('change_config', {  configAsJsonString: jsonString});
+        close();
     }
 
     onMount(() => {
@@ -48,25 +54,26 @@
 
         inputElements.forEach((input, index) => {
         input.addEventListener('input', (event) => {
-            const inputValue = event.target.value;
+            const inputElement = event.target as HTMLInputElement;
+
+            const inputValue = inputElement.value;
 
             if (inputValue.length > 3) {
-            event.target.value = inputValue.slice(0, 3);
+                inputElement.value = inputValue.slice(0, 3);
             }
 
-            ip[index] = event.target.value;
-
-            if (index < inputElements.length - 1 && inputValue.length === 3) {
-            inputElements[index + 1].focus();
-            }
+            ip[index] = inputElement.value;
+          if (index < inputElements.length - 1 && inputValue.length === 3) {
+              const nextInputElement = inputElements[index + 1] as HTMLInputElement;
+              nextInputElement.focus();
+          }
         });
         });
     });
 </script>
-
 <div>
   <h1>Options</h1>
-
+  <h2 class="discription">IP-Adresse</h2>
   <div class="ip-row">
     {#each ip as segment, index}
       <input class="ip-input" type="text" bind:value={segment} maxlength="3" />
@@ -75,11 +82,11 @@
       {/if}
     {/each}
   </div>
-
+  <h2 class="discription">Port</h2>
   <input type="text" bind:value={port} />
 
-  <button class="temp-save" on:click={first_time_file}>temp save</button>
-  <h3> - {resp} - </h3>
+  <button on:click={close} class="modal-buttons modal-buttons-cancel">Cancel</button>
+  <button on:click={save} class="modal-buttons modal-buttons-save">Save</button>
 </div>
 
 <style>
@@ -98,6 +105,8 @@
   .ip-row {
     display: flex;
     align-items: center;
+    flex-direction: row;
+    justify-content: center;
   }
   
   .ip-input {
@@ -105,7 +114,6 @@
     height: 100%;
     font-size: 2rem;
     text-align: center;
-    margin-top: 0.5em;
     background-color: var(--surface0);
     border: 1px solid var(--surface1);
     border-radius: 0.5em;
@@ -130,4 +138,33 @@
   .temp-save:active {
       background-color: var(--surface1);
   }
+  .separator {
+    margin: 0 5px;
+    font-size: 2rem;
+  }
+  .discription{
+    font-size: 2rem;
+    margin-top: 0.5em;
+  }
+
+     .modal-buttons {
+        margin-top: 10px;
+        width: 100px;
+        height: 30px;
+        border-radius: 5px;
+        border: none;
+        background-color: var(--overlay0);
+        color: var(--text);
+        font-size: 16px;
+        z-index: 10000;
+        cursor: pointer;
+    }
+    .modal-buttons-save:hover {
+        background-color: var(--green);
+        color: var(--crust);
+    }
+    .modal-buttons-cancel:hover {
+        background-color: var(--red);
+        color: var(--crust);
+    }
 </style>

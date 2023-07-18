@@ -168,7 +168,6 @@ header ul li h3:active{
     height: 100%;
     font-size: 2rem;
     text-align: center;
-    margin-top: 0.5em;
     background-color: var(--surface0);
     border: 1px solid var(--surface1);
     border-radius: 0.5em;

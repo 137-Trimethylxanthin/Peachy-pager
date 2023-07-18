@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
 	import { _toggleDarkMode} from "./+layout";
     import "./styles.css"
     import Modal from '../lib/Modal.svelte';
     import Options from '../lib/Options.svelte';
+    import {is_open} from "../lib/store"
 
     let icon = ""
     let theme = ""
@@ -37,21 +38,13 @@
     }
 
     function settingsPopup(){
-        showModal = true;
+        is_open.set(true);
     }
 
     function changeMode(){
         cMode = cMode === "Easy" ? "Dev" : "Easy"
         document.cookie = `cMode=${cMode};max-age=31536000;path=/`
     }
-
-
-  let showModal = false;
-
-  function openModal() {
-    showModal = true;
-  }
-    
 </script>
 
 <header>
@@ -69,7 +62,7 @@
         <li><img class="icons" src="./media/option-{theme}.png" alt="" on:click={settingsPopup}></li>
     </ul>
 </header>
-<Modal bind:is_open={showModal}>
+<Modal>
     <Options />
 </Modal>
 
