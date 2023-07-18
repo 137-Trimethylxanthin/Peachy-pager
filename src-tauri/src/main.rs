@@ -13,6 +13,14 @@ use serde::{Deserialize, Serialize};
 use tauri::Context;
 
 
+#[cfg(target_os = "windows")]
+const CONFIG_DIR: &str = r"peachy-pager\";
+
+#[cfg(not(target_os = "windows"))]
+const CONFIG_DIR: &str = "peachy-pager/";
+
+
+
 #[derive(Debug, Error)]
 enum CustomError {
     #[error(transparent)]
@@ -36,7 +44,7 @@ struct Config {
 
 
 fn main() {
-    let config_path = tauri::api::path::config_dir().unwrap().join(r"peachy-pager\config.json");
+    let config_path = tauri::api::path::config_dir().unwrap().join(CONFIG_DIR).join("config.json");
 
     if !config_path.exists() {
         // Create a default configuration
@@ -63,9 +71,9 @@ fn main() {
 #[tauri::command]
 fn first_time_file() -> String {
 //config file
-  let config_path = tauri::api::path::config_dir().unwrap().join(r"peachy-pager");
+  let dir = tauri::api::path::config_dir().unwrap().join(CONFIG_DIR);
 
-  format!("Path: {:?}", config_path)
+  format!("Path: {:?}", dir)
 }
 
 
@@ -129,7 +137,7 @@ fn lrsn_listener(sock: &mut TcpStream) -> Result<String, CustomError>  {
 
 #[tauri::command]
 fn connect(page_num: &str) -> Result<String, CustomError> {
-    let config_path = tauri::api::path::config_dir().unwrap().join(r"peachy-pager\config.json");
+    let config_path = tauri::api::path::config_dir().unwrap().join(CONFIG_DIR).join("config.json");
     let config_file = fs::read_to_string(config_path).expect("Failed to read file");
     let config: Config = serde_json::from_str(&config_file).expect("Failed to deserialize JSON");
 
