@@ -11,8 +11,7 @@
         document.cookie = "setTheme=light;max-age=31536000;path=/"
         document.cookie = "cMode=Easy;max-age=31536000;path=/"
     }
-    // @ts-ignore
-    let cMode = document.cookie.split(";").find((c) => c.trim().startsWith("cMode=")).split("=")[1]
+
 
     console.log(document.documentElement.dataset.theme)
     if (document.documentElement.dataset.theme === "dark"){
@@ -41,16 +40,13 @@
         is_open.set(true);
     }
 
-    function changeMode(){
-        cMode = cMode === "Easy" ? "Dev" : "Easy"
-        document.cookie = `cMode=${cMode};max-age=31536000;path=/`
-    }
+
 </script>
 
 <header>
     <ul>
         <li><h2>Peachy-pager</h2></li>
-        <li><h3 on:click={changeMode}>Mode: {cMode}</h3></li>
+        
 
         <li><img class="icons" src="./media/{icon}.png" alt="" on:click={click}></li>
         <li><img class="icons" src="./media/info-{theme}.png" alt=""></li>

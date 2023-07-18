@@ -7,10 +7,9 @@ use std::net::{TcpStream, Shutdown, SocketAddr};
 use std::thread;
 use std::time::{Duration, SystemTime, Instant};
 use xmltree::Element;
-use xmltree::ParseError;
 use thiserror::Error;
 use serde::{Deserialize, Serialize};
-use tauri::Context;
+
 
 
 #[cfg(target_os = "windows")]
@@ -43,6 +42,7 @@ struct Config {
 }
 
 
+// This code is used to connect to the server. It also creates a config file if one doesn't exist, and allows the user to change the config file.
 fn main() {
     let config_path = tauri::api::path::config_dir().unwrap().join(CONFIG_DIR).join("config.json");
 
@@ -77,6 +77,7 @@ fn first_time_file() -> String {
 }
 
 
+//This code is a function that will read from a TcpStream and return a vector of bytes.
 fn read(sock: &mut TcpStream, timeout: u64) -> io::Result<Vec<u8>> {
     let mut buf = Vec::new();
     let start = SystemTime::now();
@@ -100,6 +101,8 @@ fn read(sock: &mut TcpStream, timeout: u64) -> io::Result<Vec<u8>> {
         }
     }
 }
+
+//This function is used to listen to the LRSN Heartbeat
 
 
 fn lrsn_listener(sock: &mut TcpStream) -> Result<String, CustomError>  {

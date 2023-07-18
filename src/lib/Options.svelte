@@ -70,9 +70,22 @@
         });
         });
     });
+
+    let cMode: string;
+    const cookie = document.cookie;
+    if (cookie) {
+      const cookieValue = cookie.split(";").find((c) => c.trim().startsWith("cMode="))?.split("=")[1];
+      cMode = cookieValue === "Easy" ? "Dev" : "Easy";
+    }
+
+    function changeMode(){
+        cMode = cMode === "Easy" ? "Dev" : "Easy"
+        document.cookie = `cMode=${cMode};max-age=31536000;path=/`
+    }
 </script>
 <div>
   <h1>Options</h1>
+  <li><h3 on:click={changeMode}>Mode: {cMode}</h3></li>
   <h2 class="discription">IP-Adresse</h2>
   <div class="ip-row">
     {#each ip as segment, index}

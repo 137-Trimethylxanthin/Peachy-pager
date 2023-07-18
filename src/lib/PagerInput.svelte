@@ -8,7 +8,7 @@
     if (pageNum === '') {
       pageResponse = 'Keine Nummer -_-'
       return
-      
+
     } else if (pageNum.length !== 3) {
       pageResponse = 'Bitte eine 3 stellige number'
       return
@@ -45,8 +45,9 @@
 </script>
 
 <div>
-  <input type="text" id="greet-input" placeholder="123" maxlength="3" pattern="[0-9]*" bind:value="{pageNum}" on:input={validateInput}  />
-  <button class="main-buttons" on:click="{send}">connect</button>
+  <input type="text" id="page-num" placeholder="123" maxlength="3" pattern="[0-9]*" bind:value="{pageNum}" on:input={validateInput}  />
+  <input type="text" name="Nachricht" id="page-msg" placeholder="HI :)" maxlength="12">
+  <button class="main-buttons" on:click="{send}">Page</button>
   <p>{pageResponse}</p>
 </div>
 
@@ -59,11 +60,10 @@
     align-items: center;
   }
   input{
-    width: 100%;
+    width: 30%;
     height: 100%;
-    font-size: 2rem;
+    font-size: 5rem;
     text-align: center;
-    margin-top: 0.5em;
     background-color: var(--surface0);
     border: 1px solid var(--surface1);
     border-radius: 0.5em;
@@ -73,15 +73,17 @@
     box-shadow: 0 0 10px var(--surface2);
   }
   button{
-    width: 60%;
+    width: 25%;
     height: 100%;
-    font-size: 2rem;
+    font-size: 4rem;
     text-align: center;
     margin-top: 0.5em;
     background-color: var(--surface0);
     border: 1px solid var(--surface1);
     border-radius: 0.5em;
     box-shadow: 0 0 0 0.1em var(--surface1) inset;
+    cursor: pointer;
+    padding-bottom: 0.2em;
   }
   button:hover{
     background-color: var(--green);
@@ -91,4 +93,17 @@
     color: var(--subtext0);
     text-align: center;
   }
+  #page-msg{
+    width: 80%;
+    height: 100%;
+    font-size: 5rem;
+  }
+  #page-num{
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-bottom: 0.1em;
+    margin-bottom: -0.1em;
+    margin-top: 0.2em;
+  }
+
 </style>
